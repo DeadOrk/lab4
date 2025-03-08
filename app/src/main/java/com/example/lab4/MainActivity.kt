@@ -10,6 +10,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
 import kotlin.math.abs
 
 private const val TAG = "MainActivity"
@@ -32,6 +33,7 @@ class MainActivity : AppCompatActivity() {
         Question(R.string.question_americas, true),
         Question(R.string.question_asia, true))
 
+
     private var currentIndex = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,15 +52,18 @@ class MainActivity : AppCompatActivity() {
         backButton = findViewById(R.id.back_button)
         questionTextView = findViewById(R.id.question_text_view)
 
+
         trueButton.setOnClickListener { view: View ->
 
             checkAnswer(true)
+            answerVisiblility(true)
 
         }
 
         falseButton.setOnClickListener { view: View ->
 
             checkAnswer(false)
+            answerVisiblility(true)
 
         }
 
@@ -66,6 +71,7 @@ class MainActivity : AppCompatActivity() {
 
             currentIndex = (currentIndex + 1) % questionBank.size
             updateQuestion()
+            answerVisiblility(false)
 
         }
 
@@ -81,6 +87,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             updateQuestion()
+            answerVisiblility(false)
 
         }
 
@@ -131,20 +138,41 @@ class MainActivity : AppCompatActivity() {
         val questionTextResId = questionBank[currentIndex].textResId
         questionTextView.setText(questionTextResId)
 
+
     }
 
     private fun checkAnswer(userAnswer: Boolean) {
 
         val correctAnswer = questionBank[currentIndex].answer
-        val messageResId = if (userAnswer == correctAnswer) {
-            R.string.correct_toast
-        } else {
-            R.string.incorrect_toast
+        val messageResId : Int
+        if (userAnswer == correctAnswer)
+        {
+            messageResId = R.string.correct_toast
+        }
+        else
+        {
+            messageResId = R.string.incorrect_toast
         }
 
         Toast.makeText(this, messageResId,
             Toast.LENGTH_SHORT)
             .show()
+
+    }
+
+    private fun answerVisiblility(isAnswer: Boolean){
+
+        if (isAnswer){
+
+            trueButton.visibility = View.GONE
+            falseButton.visibility = View.GONE
+
+        }
+        else
+        {
+            trueButton.visibility = View.VISIBLE
+            falseButton.visibility = View.VISIBLE
+        }
 
     }
 
