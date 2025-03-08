@@ -9,12 +9,15 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import kotlin.math.abs
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var trueButton: Button
     private lateinit var falseButton: Button
     private lateinit var nextButton: Button
+    private lateinit var backButton: Button
+
 
     private lateinit var questionTextView: TextView
 
@@ -36,6 +39,7 @@ class MainActivity : AppCompatActivity() {
         trueButton = findViewById(R.id.true_button)
         falseButton = findViewById(R.id.false_button)
         nextButton = findViewById(R.id.next_button)
+        backButton = findViewById(R.id.back_button)
         questionTextView = findViewById(R.id.question_text_view)
 
         trueButton.setOnClickListener { view: View ->
@@ -53,6 +57,21 @@ class MainActivity : AppCompatActivity() {
         nextButton.setOnClickListener {
 
             currentIndex = (currentIndex + 1) % questionBank.size
+            updateQuestion()
+
+        }
+
+        backButton.setOnClickListener {
+
+            if (currentIndex - 1 < 0)
+            {
+                currentIndex = questionBank.size - 1
+            }
+            else
+            {
+                currentIndex = (currentIndex - 1) % questionBank.size
+            }
+
             updateQuestion()
 
         }
