@@ -8,10 +8,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.isVisible
-import kotlin.math.abs
 
 private const val TAG = "MainActivity"
 
@@ -24,6 +20,7 @@ class MainActivity : AppCompatActivity() {
 
 
     private lateinit var questionTextView: TextView
+    private lateinit var resultTextView: TextView
 
     private val questionBank = listOf(
         Question(R.string.question_australia, true),
@@ -36,6 +33,11 @@ class MainActivity : AppCompatActivity() {
 
     private var currentIndex = 0
 
+    private var answersArray:  BooleanArray? = BooleanArray(questionBank.size)
+    {
+        false
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate(Bundle?) called")
@@ -44,6 +46,7 @@ class MainActivity : AppCompatActivity() {
 
         if (savedInstanceState != null) {
             currentIndex = savedInstanceState.getInt("currentIndex")
+            answersArray = savedInstanceState.getBooleanArray("answersArray")
         }
 
         trueButton = findViewById(R.id.true_button)
@@ -53,14 +56,14 @@ class MainActivity : AppCompatActivity() {
         questionTextView = findViewById(R.id.question_text_view)
 
 
-        trueButton.setOnClickListener { view: View ->
+        trueButton.setOnClickListener {
 
             checkAnswer(true)
             answerVisiblility(true)
 
         }
 
-        falseButton.setOnClickListener { view: View ->
+        falseButton.setOnClickListener {
 
             checkAnswer(false)
             answerVisiblility(true)
@@ -96,15 +99,18 @@ class MainActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
 
-        super.onSaveInstanceState(outState);
-        outState.putInt("currentIndex", currentIndex);
+        super.onSaveInstanceState(outState)
+        outState.putInt("currentIndex", currentIndex)
+        outState.putBooleanArray("answersArray", answersArray)
 
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
 
         super.onRestoreInstanceState(savedInstanceState)
-        currentIndex = savedInstanceState.getInt("currentIndex");
+        currentIndex = savedInstanceState.getInt("currentIndex")
+        answersArray = savedInstanceState.getBooleanArray("answersArray")
+
 
     }
 
@@ -145,19 +151,23 @@ class MainActivity : AppCompatActivity() {
 
         val correctAnswer = questionBank[currentIndex].answer
         val messageResId : Int
+
         if (userAnswer == correctAnswer)
         {
             messageResId = R.string.correct_toast
+            answersArray?.set(currentIndex, true)
         }
         else
         {
             messageResId = R.string.incorrect_toast
+            answersArray?.set(currentIndex, false)
         }
 
         Toast.makeText(this, messageResId,
             Toast.LENGTH_SHORT)
             .show()
 
+        showAnswersStats()
     }
 
     private fun answerVisiblility(isAnswer: Boolean){
@@ -173,6 +183,17 @@ class MainActivity : AppCompatActivity() {
             trueButton.visibility = View.VISIBLE
             falseButton.visibility = View.VISIBLE
         }
+
+    }
+
+    private fun showAnswersStats() {
+
+        val total = questionBank.size
+        val correct = answersArray?.count { it == true }
+        val resultText = "Правильных ответов: $correct/$total"
+
+        resultTextView = findViewById(R.id.result_text_view)
+        resultTextView.text = resultText
 
     }
 

@@ -16,5 +16,6 @@
     <string name="back_button">Back</string>
     <string name="correct_toast">Correct!</string>
     <string name="incorrect_toast">Incorrect!</string>
+    <string name="result_text">Result</string>
 
 </resources>

@@ -47,4 +47,12 @@
         android:text="@string/back_button"
         android:drawablePadding="4dp" />
 
+    <TextView
+        android:id="@+id/result_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:padding="48dp"
+        tools:text="@string/result_text" />
+
 </FrameLayout>
