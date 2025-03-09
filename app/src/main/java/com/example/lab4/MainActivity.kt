@@ -8,8 +8,10 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 
 private const val TAG = "MainActivity"
+private const val KEY_INDEX = "index"
 
 class MainActivity : AppCompatActivity() {
 
@@ -22,20 +24,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var questionTextView: TextView
     private lateinit var resultTextView: TextView
 
-    private val questionBank = listOf(
-        Question(R.string.question_australia, true),
-        Question(R.string.question_oceans, true),
-        Question(R.string.question_mideast, false),
-        Question(R.string.question_africa, false),
-        Question(R.string.question_americas, true),
-        Question(R.string.question_asia, true))
-
-
-    private var currentIndex = 0
-
-    private var answersArray:  BooleanArray? = BooleanArray(questionBank.size)
+    /*private var answersArray:  BooleanArray? = BooleanArray(questionBank.size)
     {
         false
+    }*/
+
+    private val quizViewModel: QuizViewModel by lazy {
+        ViewModelProvider(this).get(QuizViewModel::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,10 +39,17 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
-        if (savedInstanceState != null) {
+        val provider: ViewModelProvider = ViewModelProvider(this)
+        val quizViewModel = provider.get(QuizViewModel::class.java)
+        Log.d(TAG, "Got a QuizViewModel: $quizViewModel")
+
+        /*if (savedInstanceState != null) {
             currentIndex = savedInstanceState.getInt("currentIndex")
             answersArray = savedInstanceState.getBooleanArray("answersArray")
-        }
+        }*/
+
+        val currentIndex = savedInstanceState?.getInt(KEY_INDEX, 0) ?: 0
+        quizViewModel.currentIndex = currentIndex
 
         trueButton = findViewById(R.id.true_button)
         falseButton = findViewById(R.id.false_button)
@@ -72,13 +74,14 @@ class MainActivity : AppCompatActivity() {
 
         nextButton.setOnClickListener {
 
-            currentIndex = (currentIndex + 1) % questionBank.size
+           //currentIndex = (currentIndex + 1) % questionBank.size
+            quizViewModel.moveToNext()
             updateQuestion()
             answerVisiblility(false)
 
         }
 
-        backButton.setOnClickListener {
+        /*backButton.setOnClickListener {
 
             if (currentIndex - 1 < 0)
             {
@@ -92,7 +95,7 @@ class MainActivity : AppCompatActivity() {
             updateQuestion()
             answerVisiblility(false)
 
-        }
+        }*/
 
         updateQuestion()
     }
@@ -100,19 +103,19 @@ class MainActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
 
         super.onSaveInstanceState(outState)
-        outState.putInt("currentIndex", currentIndex)
-        outState.putBooleanArray("answersArray", answersArray)
+        outState.putInt(KEY_INDEX,  quizViewModel.currentIndex)
+        //outState.putBooleanArray("answersArray", answersArray)
 
     }
 
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+    /*override fun onRestoreInstanceState(savedInstanceState: Bundle) {
 
         super.onRestoreInstanceState(savedInstanceState)
         currentIndex = savedInstanceState.getInt("currentIndex")
         answersArray = savedInstanceState.getBooleanArray("answersArray")
 
 
-    }
+    }*/
 
     override fun onStart() {
         super.onStart()
@@ -141,7 +144,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateQuestion() {
 
-        val questionTextResId = questionBank[currentIndex].textResId
+        //val questionTextResId = questionBank[currentIndex].textResId
+        val questionTextResId = quizViewModel.currentQuestionText
         questionTextView.setText(questionTextResId)
 
 
@@ -149,25 +153,26 @@ class MainActivity : AppCompatActivity() {
 
     private fun checkAnswer(userAnswer: Boolean) {
 
-        val correctAnswer = questionBank[currentIndex].answer
+        //val correctAnswer = questionBank[currentIndex].answer
+        val correctAnswer = quizViewModel.currentQuestionAnswer
         val messageResId : Int
 
         if (userAnswer == correctAnswer)
         {
             messageResId = R.string.correct_toast
-            answersArray?.set(currentIndex, true)
+            //answersArray?.set(currentIndex, true)
         }
         else
         {
             messageResId = R.string.incorrect_toast
-            answersArray?.set(currentIndex, false)
+            //answersArray?.set(currentIndex, false)
         }
 
         Toast.makeText(this, messageResId,
             Toast.LENGTH_SHORT)
             .show()
 
-        showAnswersStats()
+        //showAnswersStats()
     }
 
     private fun answerVisiblility(isAnswer: Boolean){
@@ -186,7 +191,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun showAnswersStats() {
+    /*private fun showAnswersStats() {
 
         val total = questionBank.size
         val correct = answersArray?.count { it == true }
@@ -195,6 +200,6 @@ class MainActivity : AppCompatActivity() {
         resultTextView = findViewById(R.id.result_text_view)
         resultTextView.text = resultText
 
-    }
+    }*/
 
 }
