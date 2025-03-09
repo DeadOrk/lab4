@@ -32,6 +32,13 @@
     </LinearLayout>
 
     <Button
+        android:id="@+id/cheat_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:text="@string/cheat_button" />
+
+    <Button
         android:id="@+id/next_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -47,12 +54,12 @@
         android:text="@string/back_button"
         android:drawablePadding="4dp" />
 
-    <TextView
+    <!--<TextView
         android:id="@+id/result_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center"
         android:padding="48dp"
-        tools:text="@string/result_text" />
+        tools:text="@string/result_text" /> !-->
 
 </FrameLayout>
